@@ -1,0 +1,178 @@
+// Vitro — esquema de base de datos (alcance simplificado: solo SUPER_ADMIN)
+// Reglas: visitas nunca se eliminan físicamente; recompensas no canjeables dos veces;
+// relación usuarios-salones n:n; regla de fidelización configurable.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id           BigInt     @id @default(autoincrement())
+  email        String     @unique @db.VarChar(180)
+  passwordHash String     @db.VarChar(100)
+  name         String     @db.VarChar(120)
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  salons        SalonMembership[]
+  visits        Visit[]           @relation("registeredBy")
+  cancellations Visit[]           @relation("cancelledBy")
+  redemptions   CustomerReward[]  @relation("redeemedBy")
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+}
+
+/// n:n usuarios–salones (preparado para crecer a múltiples salones)
+model SalonMembership {
+  userId  BigInt
+  salonId BigInt
+  user    User  @relation(fields: [userId], references: [id])
+  salon   Salon @relation(fields: [salonId], references: [id])
+
+  @@id([userId, salonId])
+}
+
+model Salon {
+  id        BigInt   @id @default(autoincrement())
+  name      String   @db.VarChar(120)
+  slug      String   @unique @db.VarChar(140)
+  qrCode    String   @unique @db.VarChar(24)
+  address   String?  @db.VarChar(255)
+  phone     String?  @db.VarChar(32)
+  email     String?  @db.VarChar(180)
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members SalonMembership[]
+  visits  Visit[]
+  customerRewards CustomerReward[]
+}
+
+model Customer {
+  id        BigInt   @id @default(autoincrement())
+  /// Número de documento — identidad del cliente en la consulta pública
+  document  String   @unique @db.VarChar(20)
+  firstName String   @db.VarChar(80)
+  lastName  String?  @db.VarChar(80)
+  phone     String?  @db.VarChar(32)
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  visits       Visit[]
+  earnedRewards CustomerReward[]
+}
+
+/// Regla de fidelización configurable (inicial: 12 visitas = 1 recompensa)
+model LoyaltyProgram {
+  id             BigInt   @id @default(autoincrement())
+  name           String   @db.VarChar(80)
+  requiredVisits Int      @default(12)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+enum VisitStatus {
+  VALIDA
+  ANULADA
+}
+
+/// Nunca eliminar físicamente: corrección = ANULADA + registro de quién anuló.
+model Visit {
+  id           BigInt      @id @default(autoincrement())
+  customerId   BigInt
+  salonId      BigInt
+  registeredBy BigInt
+  status       VisitStatus @default(VALIDA)
+  cancelledBy  BigInt?
+  cancelledAt  DateTime?
+  createdAt    DateTime    @default(now())
+
+  customer   Customer @relation(fields: [customerId], references: [id])
+  salon      Salon    @relation(fields: [salonId], references: [id])
+  registrar  User     @relation("registeredBy", fields: [registeredBy], references: [id])
+  canceller  User?    @relation("cancelledBy", fields: [cancelledBy], references: [id])
+
+  @@index([customerId, createdAt])
+  @@index([salonId, createdAt])
+}
+
+enum RewardStatus {
+  DISPONIBLE
+  CANJEADA
+  ANULADA
+}
+
+model Reward {
+  id            BigInt   @id @default(autoincrement())
+  name          String   @db.VarChar(120)
+  description   String?  @db.VarChar(400)
+  requiredVisits Int     @default(12)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  awarded CustomerReward[]
+}
+
+model CustomerReward {
+  id         BigInt       @id @default(autoincrement())
+  customerId BigInt
+  rewardId   BigInt
+  salonId    BigInt
+  status     RewardStatus @default(DISPONIBLE)
+  earnedAt   DateTime     @default(now())
+  redeemedAt DateTime?
+  redeemedBy BigInt?
+
+  customer Customer @relation(fields: [customerId], references: [id])
+  reward   Reward   @relation(fields: [rewardId], references: [id])
+  salon    Salon    @relation(fields: [salonId], references: [id])
+  redeemBy User?    @relation("redeemedBy", fields: [redeemedBy], references: [id])
+
+  @@index([customerId, status])
+}
+
+/// Guardamos solo el hash del refresh token.
+model RefreshToken {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt
+  tokenHash String   @unique @db.VarChar(64)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt?
+  action    String   @db.VarChar(40)
+  entity    String   @db.VarChar(40)
+  entityId  BigInt?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([entity, createdAt])
+}

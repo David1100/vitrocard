@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Logo from '../components/Logo.astro';
+import ConsultaForm from '../components/ConsultaForm';
+---
+
+<BaseLayout title="Consulta tu tarjeta · Vitro" description="Consulta el progreso de tu tarjeta de fidelización Vitro con tu número de documento.">
+  <main class="relative mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-8 sm:px-10">
+    <!-- Decoración editorial: gran óvalo dorado al fondo + orbes flotantes -->
+    <div aria-hidden="true" class="drift-a pointer-events-none absolute -right-40 top-24 h-130 w-130 rounded-full border border-gold-400/30"></div>
+    <div aria-hidden="true" class="drift-b pointer-events-none absolute -left-52 bottom-0 h-100 w-100 rounded-full bg-clay-300/20 blur-3xl"></div>
+    <div aria-hidden="true" class="drift-b pointer-events-none absolute -right-24 top-1/2 h-72 w-72 rounded-full bg-gold-400/10 blur-3xl" style="animation-delay: -6s"></div>
+
+    <!-- Estrellas titilando -->
+    <span aria-hidden="true" class="twinkle pointer-events-none absolute right-[10%] top-[16%] text-lg text-gold-500/70">✦</span>
+    <span aria-hidden="true" class="twinkle pointer-events-none absolute left-[4%] top-[42%] text-sm text-clay-500/60" style="animation-delay: 1.1s">✦</span>
+    <span aria-hidden="true" class="twinkle pointer-events-none absolute right-[34%] top-[62%] text-base text-gold-400/60" style="animation-delay: 2s">✦</span>
+    <span aria-hidden="true" class="twinkle pointer-events-none absolute left-[16%] top-[8%] text-xs text-clay-400/50" style="animation-delay: 0.6s">✦</span>
+
+    <header class="rise flex items-center justify-between">
+      <Logo />
+      <a href="/admin/login" class="text-xs uppercase tracking-[0.25em] text-ink-400 transition hover:text-ink-900">Panel del salón ↗</a>
+    </header>
+
+    <section class="grid flex-1 content-center gap-12 py-14 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-20">
+      <div class="max-w-prose">
+        <p class="rise mb-4 inline-flex items-center gap-2 rounded-full border border-cream-300 bg-white/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-ink-500">
+          <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-clay-500"></span> Club de gratitud
+        </p>
+        <h1 class="font-display text-5xl font-light leading-[1.05] text-ink-900 sm:text-6xl lg:text-7xl">
+          <span class="rise block" style="animation-delay: 140ms">Cada visita,</span>
+          <span class="rise block" style="animation-delay: 280ms"><em class="italic text-clay-600">un paso</em> hacia</span>
+          <span class="rise block" style="animation-delay: 420ms">tu recompensa.</span>
+        </h1>
+        <p class="rise mt-6 max-w-md text-lg leading-relaxed text-ink-500" style="animation-delay: 560ms">
+          Consulta en segundos cuántos sellos llevas y qué recompensa te espera. Sin cuentas, sin contraseñas — solo tu documento.
+        </p>
+      </div>
+
+      <div class="rise" style="animation-delay: 300ms">
+        <ConsultaForm client:visible />
+      </div>
+    </section>
+
+    <footer class="rise flex items-center justify-between border-t border-cream-300/50 pt-6 text-[11px] uppercase tracking-[0.25em] text-ink-400" style="animation-delay: 360ms">
+      <span>Vitro © 2026</span>
+      <span aria-hidden="true" class="text-clay-500">
+        <span class="twinkle">✦</span>
+        <span class="twinkle" style="animation-delay: 0.9s">✦</span>
+        <span class="twinkle" style="animation-delay: 1.8s">✦</span>
+      </span>
+      <span>12 visitas = 1 recompensa</span>
+    </footer>
+  </main>
+</BaseLayout>

@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title?: string;
+  description?: string;
+  theme?: 'light' | 'ink';
+}
+
+const {
+  title = 'Vitro — Tarjeta de fidelización',
+  description = 'Tu tarjeta digital de fidelización para salones de belleza.',
+  theme = 'light',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es" class="grain">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content={theme === 'ink' ? '#2b2019' : '#faf6f0'} />
+    <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <ClientRouter />
+    <title>{title}</title>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          if (import.meta.env.DEV) {
+            // En desarrollo el SW sirve CSS/JS stale (cache-first): desregistrarlo y purgar cachés.
+            navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister()));
+            if ('caches' in window) {
+              caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
+            }
+            return;
+          }
+          navigator.serviceWorker.register('/sw.js').catch(() => {
+            /* offline no disponible: la app sigue funcionando en línea */
+          });
+        });
+      }
+    </script>
+  </head>
+  <body class:list={[theme === 'ink' ? 'bg-ink-900 text-cream-100' : 'bg-cream-50 text-ink-900', 'min-h-screen antialiased']}>
+    <slot />
+  </body>
+</html>

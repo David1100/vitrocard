@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Logo from '../../components/Logo.astro';
+import LoginForm from '../../components/LoginForm';
+---
+
+<BaseLayout title="Panel · Vitro" theme="ink" description="Panel administrativo Vitro.">
+  <main class="relative mx-auto flex min-h-screen max-w-md flex-col justify-center px-6">
+    <div aria-hidden="true" class="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full border border-gold-400/20"></div>
+    <div aria-hidden="true" class="pointer-events-none absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-clay-500/10 blur-3xl"></div>
+
+    <section class="rise relative rounded-3xl border border-cream-50/10 bg-ink-700/60 p-8 shadow-lifted backdrop-blur">
+      <header class="mb-8 text-center">
+        <Logo tone="cream" class="mx-auto" />
+        <h1 class="mt-6 font-display text-2xl font-light italic text-cream-100">Bienvenido de nuevo</h1>
+        <p class="mt-1 text-[11px] uppercase tracking-[0.3em] text-gold-400">Panel del salón</p>
+      </header>
+
+      <LoginForm client:visible />
+    </section>
+  </main>
+</BaseLayout>

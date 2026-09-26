@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Logo from '../../components/Logo.astro';
+import SalonLanding from '../../components/SalonLanding';
+
+export const prerender = false;
+
+const { code } = Astro.params;
+---
+
+<BaseLayout title={`Salón · Vitro`} description="Escaneaste el QR de tu salón Vitro.">
+  <main class="relative mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-6 py-12">
+    <div aria-hidden="true" class="pointer-events-none absolute -right-32 top-6 h-72 w-72 rounded-full border border-gold-400/30"></div>
+    <div aria-hidden="true" class="pointer-events-none absolute -left-32 bottom-6 h-72 w-72 rounded-full bg-clay-300/20 blur-3xl"></div>
+
+    <header class="rise mb-10 text-center">
+      <a href="/consulta"><Logo class="mx-auto" /></a>
+    </header>
+
+    <section class="rise" style="animation-delay: 150ms">
+      {code && <SalonLanding code={code} client:visible />}
+    </section>
+
+    <footer class="rise" style="animation-delay: 300ms">
+      <p class="mt-12 text-center text-[11px] uppercase tracking-[0.25em] text-ink-400">Cada visita, un paso hacia tu recompensa ✦</p>
+    </footer>
+  </main>
+</BaseLayout>

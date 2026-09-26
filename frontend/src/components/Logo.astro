@@ -1,0 +1,18 @@
+---
+interface Props {
+  tone?: 'ink' | 'cream';
+  class?: string;
+}
+
+const { tone = 'ink', class: className = '' } = Astro.props;
+---
+
+<img
+  src="/logo.webp"
+  alt="Vitro"
+  width="400"
+  height="164"
+  class:list={['h-12 w-auto object-contain sm:h-14', tone === 'cream' && 'drop-shadow-sm', className]}
+  loading="eager"
+  decoding="async"
+/>

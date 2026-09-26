@@ -1,0 +1,24 @@
+{
+  "name": "Vitro — Tarjeta de Fidelización",
+  "short_name": "Vitro",
+  "description": "Tu tarjeta digital de fidelización para los salones Vitro.",
+  "lang": "es",
+  "start_url": "/consulta",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2b2019",
+  "background_color": "#faf6f0",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable.png", "sizes": "300x300", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Consultar mi tarjeta",
+      "url": "/consulta",
+      "description": "Ver sellos y recompensas"
+    }
+  ]
+}
