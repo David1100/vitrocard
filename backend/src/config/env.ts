@@ -19,4 +19,10 @@ export const env = {
   corsOrigins: (process.env.CORS_ORIGIN ?? 'http://localhost:4321').split(',').map((o) => o.trim()),
   seedEmail: process.env.ADMIN_SEED_EMAIL,
   seedPassword: process.env.ADMIN_SEED_PASSWORD,
+  /**
+   * SameSite de la cookie de refresh. 'strict' para mismo site (dev/local),
+   * 'none' cuando API y frontend viven en dominios distintos (Vercel ↔ Railway);
+   * con 'none' el navegador exige Secure, garantizado por NODE_ENV=production.
+   */
+  cookieSameSite: (process.env.COOKIE_SAMESITE as 'strict' | 'lax' | 'none') ?? 'strict',
 } as const;

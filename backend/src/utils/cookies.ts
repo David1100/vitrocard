@@ -11,7 +11,7 @@ export function sendRefreshCookie(res: Response, token: string, maxAgeMs: number
   res.cookie(REFRESH_COOKIE, token, {
     httpOnly: true,
     secure: IS_PROD,
-    sameSite: 'strict',
+    sameSite: env.cookieSameSite,
     path: '/api/auth',
     maxAge: maxAgeMs,
   });
