@@ -6,3 +6,6 @@ cookies.txt
 login.json
 backend/prisma/dev.db
 .DS_Store
+
+.vercel
+.env*
